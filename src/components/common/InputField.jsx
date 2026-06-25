@@ -3,12 +3,13 @@ export default function InputField({
   placeholder,
   type = "text",
   required = false,
+  value,
+  onChange,
 }) {
   return (
     <div className="space-y-2">
       <label className="block text-sm font-semibold text-gray-700">
         {label}
-
         {required && (
           <span className="text-red-500 ml-1">*</span>
         )}
@@ -17,6 +18,8 @@ export default function InputField({
       <input
         type={type}
         placeholder={placeholder}
+        value={value}
+        onChange={onChange}
         className="
           w-full
           rounded-lg
