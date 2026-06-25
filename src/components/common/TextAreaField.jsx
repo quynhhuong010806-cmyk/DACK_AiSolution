@@ -2,10 +2,11 @@ export default function TextAreaField({
   label,
   placeholder,
   rows = 5,
+  value,
+  onChange,
 }) {
   return (
     <div className="space-y-2">
-
       <label className="block text-sm font-semibold text-gray-700">
         {label}
       </label>
@@ -13,6 +14,8 @@ export default function TextAreaField({
       <textarea
         rows={rows}
         placeholder={placeholder}
+        value={value}
+        onChange={onChange}
         className="
           w-full
           rounded-lg
@@ -25,7 +28,6 @@ export default function TextAreaField({
           focus:ring-blue-500
         "
       />
-
     </div>
   );
 }
