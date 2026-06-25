@@ -1,15 +1,49 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Card from "../common/Card";
-import requestData from "../../data/requestData";
+
+import {
+  getRequests,
+} from "../../services/requestService";
 
 export default function RequestTable() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("Tất cả");
+  const [requests, setRequests] = useState([]);
 
-  const filteredData = requestData.filter((item) => {
+  const loadRequests = async () => {
+  try {
+
+    const data =
+      await getRequests();
+
+    setRequests(data);
+
+  } catch (error) {
+
+    console.error(error);
+
+  }
+};
+  useEffect(() => {
+
+  loadRequests();
+
+  const interval =
+    setInterval(() => {
+
+      loadRequests();
+
+    }, 5000);
+
+  return () =>
+    clearInterval(interval);
+
+}, []);
+
+  const filteredData = requests.filter((item) => {
     const matchSearch =
-      item.id.toLowerCase().includes(search.toLowerCase()) ||
-      item.material.toLowerCase().includes(search.toLowerCase());
+      item.request_id.toLowerCase().includes(search.toLowerCase()) ||
+      item.item_name.toLowerCase().includes(search.toLowerCase());
 
     const matchStatus =
       statusFilter === "Tất cả" ||
@@ -119,16 +153,16 @@ export default function RequestTable() {
               filteredData.map((item) => (
 
                 <tr
-                  key={item.id}
+                  key={item.request_id}
                   className="hover:bg-gray-50 transition"
                 >
 
                   <td className="border p-3 font-medium">
-                    {item.id}
+                    {item.request_id}
                   </td>
 
                   <td className="border p-3">
-                    {item.material}
+                    {item.item_name}
                   </td>
 
                   <td className="border p-3">
@@ -136,7 +170,7 @@ export default function RequestTable() {
                   </td>
 
                   <td className="border p-3">
-                    {item.date}
+                    {item.created_at}
                   </td>
 
                   <td className="border p-3 text-center">
@@ -214,7 +248,7 @@ export default function RequestTable() {
       <div className="flex justify-between items-center mt-6">
 
         <span className="text-sm text-gray-500">
-          Hiển thị {filteredData.length} / {requestData.length} yêu cầu
+          Hiển thị {filteredData.length} / {requests.length} yêu cầu
         </span>
 
         <div className="flex gap-2">
