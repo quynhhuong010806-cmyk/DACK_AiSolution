@@ -14,23 +14,56 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import toast from "react-hot-toast";
+import {
+  createRequest,
+} from "../../services/requestService";
 export default function PurchaseForm() {
-    const navigate = useNavigate();
+const navigate = useNavigate();
 
 const [loading, setLoading] = useState(false);
-const handleSubmit = () => {
 
-  setLoading(true);
+const [category, setCategory] = useState("");
+const [itemName, setItemName] = useState("");
+const [quantity, setQuantity] = useState("");
+const [unit, setUnit] = useState("Kg");
+const [requiredDate, setRequiredDate] = useState("");
+const [priority, setPriority] = useState("Trung bình");
+const [description, setDescription] = useState("");
+const handleSubmit = async () => {
 
-  setTimeout(() => {
+  try {
 
-    setLoading(false);
+    setLoading(true);
 
-    toast.success("Yêu cầu đã được gửi thành công!");
+    await createRequest({
+      category,
+      item_name: itemName,
+      quantity,
+      unit,
+      required_date: requiredDate,
+      priority,
+      description,
+    });
+
+    toast.success(
+      "Yêu cầu đã được gửi thành công!"
+    );
 
     navigate("/dashboard");
 
-  }, 2000);
+  } catch (error) {
+
+    console.error(error);
+
+    toast.error(
+      "Gửi yêu cầu thất bại"
+    );
+
+  } finally {
+
+    setLoading(false);
+
+  }
 
 };
   return (
@@ -38,7 +71,14 @@ const handleSubmit = () => {
 
       <div className="grid grid-cols-2 gap-6">
 
-        <SelectField label="Danh mục vật tư" required>
+        <SelectField
+  label="Danh mục vật tư"
+  required
+  value={category}
+  onChange={(e) =>
+    setCategory(e.target.value)
+  }
+>
           <option>Chọn danh mục vật tư</option>
           <option>Nguyên vật liệu</option>
           <option>Linh kiện</option>
@@ -47,19 +87,34 @@ const handleSubmit = () => {
         </SelectField>
 
         <InputField
-          label="Tên vật tư cần mua"
-          placeholder="Ví dụ: Thép tấm SS400"
-          required
-        />
+  label="Tên vật tư cần mua"
+  placeholder="Ví dụ: Thép tấm SS400"
+  required
+  value={itemName}
+  onChange={(e) =>
+    setItemName(e.target.value)
+  }
+/>
 
         <InputField
-          label="Số lượng"
-          type="number"
-          placeholder="Nhập số lượng"
-          required
-        />
+  label="Số lượng"
+  type="number"
+  placeholder="Nhập số lượng"
+  required
+  value={quantity}
+  onChange={(e) =>
+    setQuantity(e.target.value)
+  }
+/>
 
-        <SelectField label="Đơn vị tính" required>
+        <SelectField
+  label="Đơn vị tính"
+  required
+  value={unit}
+  onChange={(e) =>
+    setUnit(e.target.value)
+  }
+>
           <option>Kg</option>
           <option>Tấn</option>
           <option>Mét</option>
@@ -68,12 +123,22 @@ const handleSubmit = () => {
         </SelectField>
 
         <InputField
-          label="Ngày cần giao"
-          type="date"
-          required
-        />
+  label="Ngày cần giao"
+  type="date"
+  required
+  value={requiredDate}
+  onChange={(e) =>
+    setRequiredDate(e.target.value)
+  }
+/>
 
-        <SelectField label="Mức độ ưu tiên">
+        <SelectField
+  label="Mức độ ưu tiên"
+  value={priority}
+  onChange={(e) =>
+    setPriority(e.target.value)
+  }
+>
           <option>Thấp</option>
           <option>Trung bình</option>
           <option>Cao</option>
@@ -84,9 +149,13 @@ const handleSubmit = () => {
       <div className="mt-6">
 
         <TextAreaField
-          label="Mô tả yêu cầu"
-          placeholder="Ví dụ: Cần thép đạt tiêu chuẩn ASTM A36. Ưu tiên nhà cung cấp từng hợp tác..."
-        />
+  label="Mô tả yêu cầu"
+  placeholder="..."
+  value={description}
+  onChange={(e) =>
+    setDescription(e.target.value)
+  }
+/>
 
       </div>
 
@@ -114,7 +183,10 @@ const handleSubmit = () => {
 
       <div className="flex gap-4 mt-8">
 
-        <Button>
+        <Button
+  onClick={handleSubmit}
+  disabled={loading}
+>
           <div className="flex items-center gap-2">
             <FaPaperPlane />
             Gửi yêu cầu đánh giá
