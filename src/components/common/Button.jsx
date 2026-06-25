@@ -2,6 +2,7 @@ export default function Button({
   children,
   variant = "primary",
   type = "button",
+  ...props
 }) {
   const baseStyle =
     "px-5 py-3 rounded-lg font-medium transition duration-200";
@@ -21,6 +22,7 @@ export default function Button({
     <button
       type={type}
       className={`${baseStyle} ${styles[variant]}`}
+      {...props}
     >
       {children}
     </button>
